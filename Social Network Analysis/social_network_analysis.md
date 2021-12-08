@@ -366,15 +366,12 @@ plot(graph, vertex.label = '', edge.width = Betweenness/50)
 
 ``` r
 # Making a chord diagram of the CY-Tech students' movement
-png("Social Network Analysis\\chord.png")
 school <- c('CY Tech','CY Tech','CY Tech','CY Tech','CY Tech','CY Tech','CY Tech','CY Tech','CY Tech','CY Tech','CY Tech','CY Tech','CY Tech','Howest','Gothenburg','Singidunum','Singidunum')
 student <- c('Sarvesh','Neha','Amr','Khushi','Anh Thu','Yasmine','Buu','Maxime','Gabriel','Aya','Maxime','Rodolphe','Gwénaëlle','Casper','Andreas','Zuk','Johann')
 university <- c('Gothenburg','Gothenburg','Gothenburg','Gothenburg','Gothenburg','Howest','Howest','Howest','Howest','Howest','Reutlingen','Reutlingen','VUB','CY Tech','CY Tech','CY Tech','CY Tech')
 data <- data.frame(student, university)
 adjacencyData <- with(data, table(school, university))
 chordDiagram(adjacencyData, transparency = 0.5)
-dev.off()
 ```
 
-    ## png 
-    ##   2
+![](social_network_analysis_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
