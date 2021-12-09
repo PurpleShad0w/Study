@@ -3,3 +3,6 @@ data_wrangling.md linguist-language=R
 dimensionality_reduction.md linguist-language=R
 social_network_analysis.md linguist-language=R
 project.md linguist-language=Python
+
+# To convert Jupyter Notebook to Github Markdown :
+# jupyter nbconvert --to markdown notebook.ipynb
