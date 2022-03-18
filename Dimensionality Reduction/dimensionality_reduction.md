@@ -2,7 +2,7 @@ Dimensionality Reduction Report - Code Section
 ================
 CINQUANTA Octave
 Dec 2021
-
+ 
 ``` r
 # Setting the working directory
 knitr::opts_knit$set(root.dir = "C:/Users/eleoc/Desktop/WORK/Y3S1")
