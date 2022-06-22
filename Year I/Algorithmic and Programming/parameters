@@ -1,0 +1,7 @@
+axiom = "---a"
+rules = 
+"a=aa+[+a[+a]-a+a]-[-a-[a]+a]" 
+"b=bb+b-a+b-a-bb" 
+angle = 60 
+size = 10 
+level = 2
