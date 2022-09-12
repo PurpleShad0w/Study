@@ -6,7 +6,8 @@ An archival repository containing works in various subjects.
 - [Algorithmic and Programming](Year%20I/Algorithmic%20and%20Programming) - _Python_
 
 ### Third Year
-- [Data Wrangling](Year%20III/Data%20Wrangling/data_wrangling.md) - _Python_ | _R_
+- [Data Wrangling](Year%20III/Data%20Wrangling/data_wrangling.md) - _R_
+    - [Theses Scraper](Year%20III/Data%20Wrangling/scraper.py) - _Python_
 - [Dimensionality Reduction](Year%20III/Dimensionality%20Reduction/dimensionality_reduction.md) - _R_
 - [Intermediate Statistics](Year%20III/Intermediate%20Statistics/intermediate_stats.md) - _R_
 - [Social Network Analysis](Year%20III/Social%20Network%20Analysis/social_network_analysis.md) - _R_
