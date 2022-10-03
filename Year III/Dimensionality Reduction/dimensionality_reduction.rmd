@@ -1,0 +1,192 @@
+---
+title: "Dimensionality Reduction Report - Code Section"
+author: "CINQUANTA Octave" 
+date: "`r format(Sys.time(), '%b %Y')`"
+#output: 
+#  pdf_document: 
+#    toc: TRUE
+#always_allow_html: true
+output: rmarkdown::github_document
+---
+
+```{r global_options, include = FALSE, echo=TRUE,eval=TRUE}
+knitr::opts_chunk$set(message=FALSE, echo = TRUE, tidy.opts=list(width.cutoff=60)) 
+```
+
+```{r setup}
+# Setting the working directory
+knitr::opts_knit$set(root.dir = "C:/Users/eleoc/Desktop/WORK/Y3S1")
+```
+
+```{r}
+# Loading libraries
+library(corrplot)
+library(gginference)
+library(dplyr)
+library(ggplot2)
+library(factoextra)
+library(stats)
+library(FactoMineR)
+library(GGally)
+library(hrbrthemes)
+library(viridis)
+```
+
+```{r}
+# Preparing a cleaner
+rm(list=ls())
+```
+
+## Identifying correlations in the variables
+
+```{r}
+# Importing data
+users = read.csv('Dimensionality Reduction\\users.db.csv')
+```
+
+```{r}
+# Creating a data set of only numeric values of users
+users_num <- mutate_all(users, function(x) as.numeric(as.character(x)))
+users_num <- select(users_num,-1,-2,-7,-8,-9)
+```
+
+```{r}
+# Adding a variable corresponding to the logged score
+users_num$score_logged <- log(users_num$score)
+```
+
+```{r}
+# Removing the categorical variables
+users_num2 <- select(users_num,-5,-8,-9,-10,-11)
+```
+
+```{r}
+# Plotting the correlations in users
+corrplot(cor(users_num2),method = 'number')
+```
+
+```{r}
+# Cor test between score and matches
+cor.test(users_num2$score, users_num2$n.matches)
+```
+
+```{r}
+# Cor test between score logged and matches
+cor.test(users_num2$score_logged, users_num2$n.matches)
+```
+
+```{r}
+# Cor test between entimental analysis and matches
+cor.test(users_num2$sent.ana, users_num2$n.matches)
+```
+
+```{r}
+# Cor test between photo updates and matches
+cor.test(users_num2$n.updates.photo, users_num2$n.matches)
+```
+
+## Dimensionality Reduction
+
+```{r}
+# PCA of users
+PCA <- prcomp(users_num2, scale = TRUE)
+PCA$rotation
+```
+
+```{r}
+# Circle of correlation
+fviz_pca_var(PCA, col.var="contrib")+scale_color_gradient2(low="#00AFBB", mid="#E7B800",high="#FC4E07", midpoint=14) +
+  theme_minimal()
+```
+
+```{r}
+# Individual map of PCA
+fviz_pca_ind(PCA,col.ind = "cos2",gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),repel = TRUE, geom = 'point', select.ind = list(cos2 = 3000))
+```
+
+```{r}
+# Biplot of PCA
+fviz_pca_biplot(PCA,col.ind = "cos2",gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),repel = TRUE, geom = 'point', select.ind = list(cos2 = 300))
+```
+
+```{r}
+# Table of loadings
+PCA_in <- princomp(users_num2, scale = TRUE, scores = TRUE)
+PCA_in$loadings
+```
+
+```{r}
+users_cat <- select(users,10,13,14,15,16)
+users_cat$gender <- as.factor(users_cat$gender)
+users_cat$voyage <- as.factor(users_cat$voyage)
+users_cat$laugh <- as.factor(users_cat$laugh)
+users_cat$photo.keke <- as.factor(users_cat$photo.keke)
+users_cat$photo.beach <- as.factor(users_cat$photo.beach)
+MCA <- MCA(users_cat,ncp = 5, graph = TRUE)
+MCA
+```
+
+```{r}
+# MCA scree plot
+fviz_screeplot(MCA)
+```
+
+##  k-means and Hierarchical Clustering
+
+```{r}
+# Scree plot of PCA
+fviz_eig(PCA)
+```
+
+```{r}
+# Scree plot of users_num2
+wss <- (nrow(users_num2)-1)*sum(apply(users_num2,2,var))
+  for (i in 2:15) wss[i] <- sum(kmeans(users_num2,
+                                       centers=i)$withinss)
+plot(1:15, wss, type="b", xlab="Number of Clusters",
+     ylab="Within groups sum of squares")
+```
+
+```{r}
+# k-means
+k <- kmeans(users_num2,centers = 5)
+fviz_cluster(k, data = users_num2, geom="point")
+```
+
+```{r}
+# Understanding the clusters
+users_clustered = users_num2
+users_clustered <- users_clustered %>%
+  mutate(cluster = k$cluster)
+ggparcoord(users_clustered,
+    columns = 1:7, groupColumn = 8,
+    showPoints = TRUE, 
+    title = "Parallel Coordinate Plot for the k-means clusters",
+    alphaLines = 0.3
+    ) + 
+  scale_color_viridis() +
+  theme(plot.title = element_text(size=10))+
+  scale_x_discrete(guide = guide_axis(n.dodge=3))
+```
+
+
+```{r}
+# HCPC
+res <- HCPC(users_num2,nb.clust = 5)
+fviz_cluster(res, geom="point")
+```
+
+```{r}
+users_clustered2 = res$data.clust
+users_clustered2$clust <- as.numeric(users_clustered2$clust)
+ggparcoord(users_clustered2,
+    columns = 1:7, groupColumn = 8,
+    showPoints = TRUE, 
+    title = "Parallel Coordinate Plot for the HC clusters",
+    alphaLines = 0.3
+    ) + 
+  scale_color_viridis() +
+  theme(plot.title = element_text(size=10))+
+  scale_x_discrete(guide = guide_axis(n.dodge=3))
+```
+
