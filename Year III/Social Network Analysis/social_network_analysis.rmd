@@ -1,0 +1,240 @@
+---
+title: "Social Network Analysis Report - Code Section"
+author: "CINQUANTA Octave" 
+date: "`r format(Sys.time(), '%b %Y')`"
+#output: 
+#  pdf_document: 
+#    toc: TRUE
+#always_allow_html: true
+output: rmarkdown::github_document
+---
+
+```{r global_options, include = FALSE, echo=TRUE,eval=TRUE}
+knitr::opts_chunk$set(message=FALSE, echo = TRUE, tidy.opts=list(width.cutoff=60)) 
+```
+
+```{r setup}
+# Setting the working directory
+knitr::opts_knit$set(root.dir = "C:/Users/eleoc/Desktop/WORK/Y3S1")
+```
+
+```{r}
+# Loading libraries
+library(dplyr)
+library(networkD3)
+library(circlize)
+library(tidyr)
+library(corrplot)
+library(webshot)
+library(igraph)
+library(htmlwidgets)
+library(visNetwork)
+```
+
+```{r}
+# Preparing a cleaner
+rm(list=ls())
+```
+
+```{r}
+# Importing data
+audit = read.csv('Social Network Analysis\\Auditions.db.comp.csv')
+```
+
+```{r}
+# Creating subsets
+audit_sub1 = filter(audit, year == 2017 & status == 'interne')
+audit_sub2 = filter(audit, year == 2017 & status == 'externe')
+audit_sub3 = filter(audit, year == 2018 & status == 'interne')
+audit_sub4 = filter(audit, year == 2018 & status == 'externe')
+audit_sub5 = filter(audit, year == 2019 & status == 'interne')
+audit_sub6 = filter(audit, year == 2019 & status == 'externe')
+audit_sub7 = filter(audit, year == 2020 & status == 'interne')
+audit_sub8 = filter(audit, year == 2020 & status == 'externe')
+```
+
+```{r}
+# Subset and beyond
+
+audit_sub1_edge <- audit_sub1 %>%
+  select(n_poste, Name) %>%
+  inner_join(., select(., n_poste, Name), by = "n_poste") %>%
+  rename(name1 = Name.x, name2 = Name.y) %>%
+  filter(name1 != name2) %>%
+  unique %>%
+  arrange(n_poste) %>%
+  select(2,3)
+
+audit_sub2_edge <- audit_sub2 %>%
+  select(n_poste, Name) %>%
+  inner_join(., select(., n_poste, Name), by = "n_poste") %>%
+  rename(name1 = Name.x, name2 = Name.y) %>%
+  filter(name1 != name2) %>%
+  unique %>%
+  arrange(n_poste) %>%
+  select(2,3)
+
+audit_sub3_edge <- audit_sub3 %>%
+  select(n_poste, Name) %>%
+  inner_join(., select(., n_poste, Name), by = "n_poste") %>%
+  rename(name1 = Name.x, name2 = Name.y) %>%
+  filter(name1 != name2) %>%
+  unique %>%
+  arrange(n_poste) %>%
+  select(2,3)
+
+audit_sub4_edge <- audit_sub4 %>%
+  select(n_poste, Name) %>%
+  inner_join(., select(., n_poste, Name), by = "n_poste") %>%
+  rename(name1 = Name.x, name2 = Name.y) %>%
+  filter(name1 != name2) %>%
+  unique %>%
+  arrange(n_poste) %>%
+  select(2,3)
+
+audit_sub5_edge <- audit_sub5 %>%
+  select(n_poste, Name) %>%
+  inner_join(., select(., n_poste, Name), by = "n_poste") %>%
+  rename(name1 = Name.x, name2 = Name.y) %>%
+  filter(name1 != name2) %>%
+  unique %>%
+  arrange(n_poste) %>%
+  select(2,3)
+
+audit_sub6_edge <- audit_sub6 %>%
+  select(n_poste, Name) %>%
+  inner_join(., select(., n_poste, Name), by = "n_poste") %>%
+  rename(name1 = Name.x, name2 = Name.y) %>%
+  filter(name1 != name2) %>%
+  unique %>%
+  arrange(n_poste) %>%
+  select(2,3)
+
+audit_sub7_edge <- audit_sub7 %>%
+  select(n_poste, Name) %>%
+  inner_join(., select(., n_poste, Name), by = "n_poste") %>%
+  rename(name1 = Name.x, name2 = Name.y) %>%
+  filter(name1 != name2) %>%
+  unique %>%
+  arrange(n_poste) %>%
+  select(2,3)
+
+audit_sub8_edge <- audit_sub8 %>%
+  select(n_poste, Name) %>%
+  inner_join(., select(., n_poste, Name), by = "n_poste") %>%
+  rename(name1 = Name.x, name2 = Name.y) %>%
+  filter(name1 != name2) %>%
+  unique %>%
+  arrange(n_poste) %>%
+  select(2,3)
+```
+
+```{r}
+# Creating networks
+network1 = simpleNetwork(audit_sub1_edge)
+network2 = simpleNetwork(audit_sub2_edge)
+network3 = simpleNetwork(audit_sub3_edge)
+network4 = simpleNetwork(audit_sub4_edge)
+network5 = simpleNetwork(audit_sub5_edge)
+network6 = simpleNetwork(audit_sub6_edge)
+network7 = simpleNetwork(audit_sub7_edge)
+network8 = simpleNetwork(audit_sub8_edge)
+```
+
+```{r}
+saveNetwork(network1,'Social Network Analysis\\network1.html') 
+saveNetwork(network2,'Social Network Analysis\\network2.html')
+saveNetwork(network3,'Social Network Analysis\\network3.html')
+saveNetwork(network4,'Social Network Analysis\\network4.html')
+saveNetwork(network5,'Social Network Analysis\\network5.html')
+saveNetwork(network6,'Social Network Analysis\\network6.html')
+saveNetwork(network7,'Social Network Analysis\\network7.html')
+saveNetwork(network8,'Social Network Analysis\\network8.html')
+```
+
+```{r}
+webshot("Social Network Analysis\\network1.html", "Social Network Analysis\\network1.png", delay = 1)
+webshot("Social Network Analysis\\network2.html", "Social Network Analysis\\network2.png", delay = 1)
+webshot("Social Network Analysis\\network3.html", "Social Network Analysis\\network3.png", delay = 1)
+webshot("Social Network Analysis\\network4.html", "Social Network Analysis\\network4.png", delay = 1)
+webshot("Social Network Analysis\\network5.html", "Social Network Analysis\\network5.png", delay = 1)
+webshot("Social Network Analysis\\network6.html", "Social Network Analysis\\network6.png", delay = 1)
+webshot("Social Network Analysis\\network7.html", "Social Network Analysis\\network7.png", delay = 1)
+webshot("Social Network Analysis\\network8.html", "Social Network Analysis\\network8.png", delay = 1)
+```
+
+```{r}
+# Plotting a network using iGraph
+graph = graph_from_edgelist(data.matrix(audit_sub6_edge), directed = FALSE)
+igraph.options(vertex.size=7)
+plot(graph, vertex.label = '')
+saveWidget(visIgraph(graph), file = 'Social Network Analysis\\graph.html')
+```
+
+```{r}
+# Detecting and plotting communities
+lc <- cluster_louvain(graph)
+membership(lc)
+communities(lc)
+plot(lc, graph, vertex.label = '')
+```
+
+
+```{r}
+# Network of all externals
+audit_sub9 = filter(audit, status == 'externe')
+
+audit_sub9_edge <- audit_sub9 %>%
+  select(n_poste, Name) %>%
+  inner_join(., select(., n_poste, Name), by = "n_poste") %>%
+  rename(name1 = Name.x, name2 = Name.y) %>%
+  filter(name1 != name2) %>%
+  unique %>%
+  arrange(n_poste) %>%
+  select(2,3)
+
+network9 = simpleNetwork(audit_sub9_edge)
+saveNetwork(network9,'Social Network Analysis\\network9.html')
+webshot("Social Network Analysis\\network9.html", "Social Network Analysis\\network9.png", delay = 1)
+```
+
+```{r}
+# Top values of degree
+Degree <- degree(graph)
+head(sort(Degree, decreasing = TRUE), n = 10)
+```
+
+```{r}
+# Top values of strength
+Strength <- strength(graph)
+head(sort(Strength, decreasing = TRUE), n = 10)
+```
+
+```{r}
+# Top values of betweenness
+Betweenness <- betweenness(graph)
+head(sort(Betweenness, decreasing = TRUE), n = 10)
+```
+
+```{r}
+plot(graph, vertex.label = '', edge.width = Degree)
+```
+
+```{r}
+plot(graph, vertex.label = '', edge.width = Strength)
+```
+
+```{r}
+plot(graph, vertex.label = '', edge.width = Betweenness/50)
+```
+
+```{r}
+# Making a chord diagram of the CY-Tech students' movement
+school <- c('CY Tech','CY Tech','CY Tech','CY Tech','CY Tech','CY Tech','CY Tech','CY Tech','CY Tech','CY Tech','CY Tech','CY Tech','CY Tech','Howest','Gothenburg','Singidunum','Singidunum')
+student <- c('Sarvesh','Neha','Amr','Khushi','Anh Thu','Yasmine','Buu','Maxime','Gabriel','Aya','Maxime','Rodolphe','Gwénaëlle','Casper','Andreas','Zuk','Johann')
+university <- c('Gothenburg','Gothenburg','Gothenburg','Gothenburg','Gothenburg','Howest','Howest','Howest','Howest','Howest','Reutlingen','Reutlingen','VUB','CY Tech','CY Tech','CY Tech','CY Tech')
+data <- data.frame(student, university)
+adjacencyData <- with(data, table(school, university))
+chordDiagram(adjacencyData, transparency = 0.5)
+```
+
