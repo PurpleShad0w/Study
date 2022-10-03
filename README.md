@@ -14,6 +14,7 @@ An archival repository containing works in various subjects.
 - [Text Mining and Natural Language Processing](Year%20III/Text%20Mining%20and%20NLP/text_mining_and_nlp.ipynb) - _Python_
 
 ### Projects
+- [Naturality of Australian Deaths](Year%20II//Australian%20Deaths//deadly_project.R) - _R_
 - [Web Shop](https://github.com/PurpleShad0w/Web-Shop) - _PHP_
 - [YouTube Trending Sentimental Analysis](Year%20III//YouTube%20Trending%20SA/project.ipynb) - _Python_
 
