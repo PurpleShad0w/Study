@@ -1,0 +1,329 @@
+```{r}
+library(dplyr)
+library(ggplot2)
+library(sf)
+library(scatterplot3d)
+library(spatstat)
+library(sp)
+library(spdep)
+library(R2BayesX)
+```
+
+```{r}
+crimes <- read.csv("source/Gun_Crimes_Heat_Map.csv")
+```
+
+```{r}
+crimes <- crimes %>%
+    filter(Primary.Type == "CRIMINAL SEXUAL ASSAULT")
+```
+
+Facet grid of Criminal Sexual Assault.
+
+```{r}
+chicago <- st_read("source/geo_export_d7086b7b-50e4-4186-b224-775ec3502a53.shp")
+
+ggplot() +
+    geom_sf(data = chicago, fill = "white", color = "black") +
+    coord_sf(crs = 4326) +
+    theme_void() +
+    facet_wrap(~Year) +
+    geom_point(data = crimes, aes(x = Longitude, y = Latitude),
+        color = "#a251ff", alpha = 0.5)
+```
+
+Lollipop plot of Criminal Sexual Assault.
+
+```{r}
+crimes$colorYear[crimes$Year == 2014] <- "green"
+crimes$colorYear[crimes$Year == 2015] <- "yellow"
+crimes$colorYear[crimes$Year == 2016] <- "blue"
+crimes$colorYear[crimes$Year == 2017] <- "red"
+crimes$colorYear[crimes$Year == 2018] <- "brown"
+crimes$colorYear[crimes$Year == 2019] <- "violet"
+crimes$colorYear[crimes$Year == 2020] <- "orange"
+crimes$colorYear[crimes$Year == 2021] <- "cyan"
+crimes$colorYear[crimes$Year == 2022] <- "gray"
+
+with(crimes, {
+   scatterplot3d(Longitude, Latitude, Year,
+                 color = colorYear, pch = 19,
+                 type = "h",
+                 main = "CRIMINAL SEXUAL ASSAULT",
+                 xlab = "Longitude",
+                 ylab = "Latitude",
+                 zlab = "Year")
+})
+```
+
+## Section 6
+
+### Section 6.1
+
+#### Section 6.1.1
+
+```{r}
+disc10 <- disc(10)
+```
+
+```{r}
+set.seed(123)
+p_cluster <- rThomas(kappa = 0.35, scale = 1, mu = 3, win = disc10)
+plot(p_cluster)
+```
+
+```{r}
+quadrat.test(p_cluster, alternative = "clustered")
+```
+
+```{r}
+set.seed(123)
+p_regular <- rStrauss(beta = 2.9, gamma = 0.025, R = .5, W = disc10)
+plot(p_regular)
+```
+
+```{r}
+quadrat.test(p_regular, alternative = "regular")
+```
+
+```{r}
+p_poisson <- rpoispp(lambda = 300 / area(disc10), win = disc10)
+p_regular
+p_poisson
+```
+
+```{r}
+nnd_poisson <- nndist(p_poisson)
+```
+
+```{r}
+hist(nnd_poisson)
+```
+
+```{r}
+g_poisson <- Gest(p_poisson)
+```
+
+```{r}
+plot(g_poisson)
+```
+
+```{r}
+nnd_regular <- nndist(p_regular)
+hist(nnd_regular)
+```
+
+```{r}
+g_regular <- Gest(p_regular)
+plot(g_regular)
+```
+
+```{r}
+k_poisson <- Kest(p_poisson, correction = "border")
+plot(k_poisson, . ~ r)
+```
+
+```{r}
+plot(k_poisson, . - pi * r^2 ~ r)
+```
+
+```{r}
+p_cluster
+```
+
+```{r}
+k_cluster_env <- envelope(p_cluster, Kest, correction = "border")
+plot(k_cluster_env, . - pi * r ^ 2 ~ r)
+```
+
+```{r}
+k_regular_env <- envelope(p_regular, Kest, correction = "border")
+plot(k_regular_env, . - pi * r ^ 2 ~ r)
+```
+
+#### Section 6.1.2
+
+```{r}
+data(bei)
+bei
+```
+
+```{r}
+png("elev.png")
+
+plot(bei.extra$elev)
+plot(bei, add = TRUE, pch = "+")
+
+dev.off()
+```
+
+```{r}
+png("bei.png")
+
+z <- bei.extra$elev
+x <- seq(1, nrow(z))
+y <- seq(1, ncol(z))
+
+z <- as.matrix(z)
+
+col_pal <- colorRampPalette(c("blue", "red"))
+colors <- col_pal(100)
+z_facet_color <- (z[-1, -1] + z[-1, -ncol(z)] +
+    z[-nrow(z), -1] + z[-nrow(z), -ncol(z)]) / 4
+z_facet_range <- cut(z_facet_color, 100)
+
+par(bg = "slategray")
+pmat <- persp(x, y, z, theta = 135, phi = 30, col = colors[z_facet_range],
+    scale = FALSE, ltheta = -120, shade = 0.75, border = NA, box = FALSE)
+
+s <- sample(seq(1, prod(dim(z))), size = 500)
+xx <- x[row(z)[s]]
+yy <- y[col(z)[s]]
+zz <- z[s] + 10
+
+depth3d <- function(x, y, z, pmat, minsize = 0.2, maxsize = 2) {
+  tr <- as.matrix(cbind(x, y, z, 1)) %*% pmat
+  tr <- tr[, 3] / tr[, 4]
+  psize <- ((tr - min(tr)) * (maxsize - minsize)) /
+    (max(tr) - min(tr)) + minsize
+  return(psize)
+}
+
+psize <- depth3d(xx, yy, zz, pmat, minsize = 0.1, maxsize = 1)
+mypoints <- trans3d(xx, yy, zz, pmat = pmat)
+points(mypoints, pch = 8, cex = psize, col = 4)
+
+dev.off()
+```
+
+```{r}
+# quadrat.test(as.ppp(bei$x, bei$y), alternative = "clustered")
+```
+
+### Section 6.2
+
+```{r}
+preston_crime <- read.csv("source/preston crime-spatstat.csv")
+preston_crime$marks <- as.factor(preston_crime$marks)
+crime_splits <- split(preston_crime, preston_crime$marks)
+```
+
+```{r}
+plot(crime_splits$"Non-violent crime"$x, crime_splits$"Non-violent crime"$y,
+      pch = 19, col = "blue", bty = "n", ylab = "", yaxt = "n",
+      xlab = "", xaxt = "n")
+par(new = TRUE)
+plot(crime_splits$"Violent crime"$x, crime_splits$"Violent crime"$y,
+      pch = 19, col = "red", ylab = "", xlab = "")
+```
+
+```{r}
+c(crime_splits$"Violent crime"$x, crime_splits$"Violent crime"$y)
+crime_splits$"Violent crime"$x
+```
+
+```{r}
+crime_ppp <- ppp(x = crime_splits$"Violent crime"$x, y = crime_splits$"Violent crime"$y)
+```
+
+```{r}
+plot(density(crime_ppp))
+```
+
+```{r}
+class(crime_ppp)
+```
+
+### Section 6.3
+
+```{r}
+filename <- file.choose()
+london <- readRDS(filename)
+```
+
+```{r}
+model_flu <- glm(
+  Flu_OBS ~ HealthDeprivation,
+  offset = log(TOTAL_POP),
+  data = london,
+  family = poisson)
+```
+
+```{r}
+summary(model_flu)
+```
+
+```{r}
+london$Flu_Resid <- residuals(model_flu)
+```
+
+```{r}
+spplot(london, "Flu_Resid")
+```
+
+```{r}
+class(london)
+```
+
+```{r}
+borough_nb <- poly2nb(london)
+```
+
+```{r}
+moran.mc(london$Flu_Resid, listw = nb2listw(borough_nb), nsim = 999)
+```
+
+```{r}
+model_flu <- glm(Flu_OBS ~ HealthDeprivation, offset = log(TOTAL_POP),
+                data = london, family = poisson)
+```
+  
+```{r}
+summary(model_flu)
+```
+
+```{r}
+bayes_flu <- bayesx(Flu_OBS ~ HealthDeprivation, offset = log(london$TOTAL_POP),
+                    family = "poisson", data = data.frame(london), 
+                    control = bayesx.control(seed = 17610407))
+```
+
+```{r}
+summary(bayes_flu)
+```
+
+```{r}
+plot(samples(bayes_flu))
+```
+
+```{r}
+borough_nb <- poly2nb(london)
+borough_gra <- nb2gra(borough_nb)
+```
+
+```{r}
+flu_spatial <- bayesx(
+  Flu_OBS ~ HealthDeprivation + sx(i, bs = "spatial", map = borough_gra),
+  offset = log(london$TOTAL_POP),
+  family = "poisson", data = data.frame(london), 
+  control = bayesx.control(seed = 17610407)
+)
+```
+
+```{r}
+summary(flu_spatial)
+```
+
+```{r}
+london$spatial <- fitted(flu_spatial, term = "sx(i):mrf")[, "Mean"]
+spplot(london, zcol = "spatial")
+```
+
+```{r}
+london$spatial_resid <- residuals(flu_spatial)[, "mu"]
+spplot(london, zcol = "spatial_resid")
+```
+
+```{r}
+moran.mc(london$spatial_resid, nb2listw(borough_nb), 999)
+```

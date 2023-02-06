@@ -1,0 +1,75 @@
+---
+title: "cosups MBA"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(readxl)
+library(knitr)
+library(ggplot2)
+library(lubridate)
+library(arules)
+library(arulesViz)
+library(plyr)
+library(dplyr)
+```
+
+```{r}
+cosups <- read.csv("cosups.csv")
+cosups <- cosups %>% mutate(uni_0 = as.factor(uni_0))
+cosups <- cosups %>% mutate(uni_1 = as.factor(uni_1))
+cosups$count <- as.numeric(as.character(cosups$count))
+glimpse(cosups)
+```
+
+```{r}
+ggplot(cosups, aes(x = count)) +
+    geom_histogram(bins = 100) +
+    scale_x_log10() +
+    scale_y_log10() +
+    labs(title = "Distribution of count", x = "Count", y = "Frequency")
+```
+
+```{r}
+cosups %>%
+    group_by(uni_0) %>%
+    summarise(count = sum(count)) %>%
+    arrange(desc(count)) %>%
+    head(10) %>%
+    ggplot(aes(x = reorder(uni_0, -count), y = count)) +
+    geom_bar(stat = "identity", fill = "#914350") +
+    coord_flip() +
+    labs(title = "Top 10 universities in uni_0", x = "University", y = "Count")
+```
+
+```{r}
+cosups %>%
+    group_by(uni_1) %>%
+    summarise(count = sum(count)) %>%
+    arrange(desc(count)) %>%
+    head(10) %>%
+    ggplot(aes(x = reorder(uni_1, -count), y = count)) +
+    geom_bar(stat = "identity", fill = "#914350") +
+    coord_flip() +
+    labs(title = "Top 10 universities in uni_1", x = "University", y = "Count")
+```
+
+```{r}
+tr <- read.transactions("cosups_full.csv", format = "basket", sep = ",")
+tr
+```
+
+```{r}
+itemFrequencyPlot(tr, topN = 20, type = "absolute")
+```
+
+```{r}
+rules <- apriori(tr, parameter = list(supp = 0.001, conf = 0.8))
+rules <- sort(rules, by = "confidence", decreasing = TRUE)
+summary(rules)
+```
