@@ -1,0 +1,50 @@
+---
+title: "Sequence Data"
+output: github_document
+---
+
+#### Section 5.3 - Sequence Data
+
+```{r}
+library(dplyr)
+library(TraMineR)
+library(cluster)
+```
+
+```{r}
+convos <- read.csv("convos.csv", sep = ",", header = FALSE)
+convos <- convos[-1, ]
+```
+
+```{r}
+seq <- seqdef(convos)
+seqplot(seq, type = 'i', legend.prop = c(0.25))
+seqplot(seq, type = 'f', legend.prop = c(0.25))
+seqplot(seq, type = 'd', legend.prop = c(0.25))
+```
+
+```{r}
+# DO NOT RUN, ONLY KNIT
+seqplot(seq, type = 'I', sortv = 'from.start', legend.prop = c(0.25))
+```
+
+```{r}
+seqtrate(seq)
+```
+
+```{r}
+convos_sample <- convos[1:500, ]
+seq_sample <- seqdef(convos_sample)
+```
+
+```{r}
+dist.om1 <- seqdist(seq_sample, method = "OM", indel = 1, sm = 'TRATE')
+clusterward1 <- agnes(dist.om1, diss = TRUE, method = "ward")
+plot(clusterward1, which.plot = 2)
+cl1.4 <- cutree(clusterward1, k = 4)
+cl1.4fac <- factor(cl1.4, labels = c("Type 1", "Type 2", "Type 3", "Type 4"))
+```
+
+```{r}
+seqplot(seq_sample, type = 'i', legend.prop = c(0.25), group = cl1.4fac)
+```
