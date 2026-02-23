@@ -1,0 +1,33 @@
+[build-system]
+requires = [ "setuptools",]
+build-backend = "setuptools.build_meta"
+
+[project]
+requires-python = ">=3.9"
+name = "purchase_predict"
+readme = "README.md"
+dynamic = [ "version",]
+dependencies = [ "ipython>=8.10", "jupyterlab>=3.0", "notebook", "kedro~=0.19.11",]
+
+[project.scripts]
+purchase-predict = "purchase_predict.__main__:main"
+
+[tool.kedro]
+package_name = "purchase_predict"
+project_name = "purchase-predict"
+kedro_init_version = "0.19.11"
+tools = "['None']"
+example_pipeline = "False"
+source_dir = "src"
+
+[project.entry-points."kedro.hooks"]
+
+[tool.setuptools.dynamic.version]
+attr = "purchase_predict.__version__"
+
+[tool.setuptools.packages.find]
+where = [ "src",]
+namespaces = false
+
+[tool.kedro_telemetry]
+project_id = "283a1948cd95454aa8f464dd4806ceb4"

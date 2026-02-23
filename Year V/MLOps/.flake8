@@ -1,0 +1,8 @@
+[flake8]
+max-line-length = 120
+max-complexity = 16
+exclude = .git,.ipython,__pycache__,venv,build,dist
+per-file-ignores = 
+	__init__.py: F401
+	test_loading_pipeline.py : E721
+	test_loading_run.py : E721
