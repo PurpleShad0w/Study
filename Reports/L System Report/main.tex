@@ -1,0 +1,40 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{indentfirst}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=red,
+    urlcolor=black,
+}
+
+\title{L-System Report}
+\author{Cheniour Maxime \\ Cinquanta Octave}
+\date{June 2020}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+
+The task this time was to create in python a Lindenmayer system. Such a system, also called L-system, is an alphabet of symbols used to create strings using a given "axiom" and certain production rules. We were asked to create a program capable of reading information on such a system from a file, then our program would be able to an L-system given a certain indicated level, and finally it would also be able to draw the graph of the given string from the system.
+
+\section{Contribution}
+It is in this part that we will explain in detail how our code works and what each function does in general. \\
+First of all the first function is 'read', that makes it possible extract the information of the parameter file. The user doesn't need to input any information, only to change the parameter file name to 'parameters'. Then the function read will create a dictionary to easily organize all the information. In the end, the function returns the dictionary sys, allowing the second function to work.\\
+The second function, 'generate' does as it name indicates. In function of the level and the rules indicated in the parameters file, it will modify the axiom, generating a new axiom that the final function will use to draw using Turtle.\\
+Finally, the final function, 'draw', will create the system following the defined rules given by the teacher, the axiom, and the size and angle written in the parameters file. The result is a turtle drawing.
+
+\section{Student's Feedback}
+\subsection{Octave's feedback}
+
+Well, there's not much for me to say. Last time's failure left us quite scared of making such a mistake again, which for once we didn't. This motivation actually helped us face this project a lot earlier than we would have otherwise, and so we decided to end it the day we started it. I can't say it was all easy, as we did struggle for some things, notably the third part of the program and at the beginning the principle of L-systems was not easy to get in mind, but once understood it went okay. I do believe such a project has been a welcome change compared to games, especially the Qwirkle. Although the end of this year was quite a mess with all the tests and whatnot, this project did not become another bridge between our promised diploma and our uprising dementia.
+
+\subsection{Maxime's Feedback}
+This time, we decided to finish the project early, to not have a repeat of what happened last time. Thus, I worked and finished the project in one sitting, and it was a lot easier than the Qwirkle. The hardest was understanding how turtle worked and how to correctly read the information. once the idea was here, it was smooth sailing. I just received some help to polish the code at the end. Coding the L-system was interesting, and was a nice change compared to what we had previously. I liked it and it was a nice way to end the year.
+\end{document}
