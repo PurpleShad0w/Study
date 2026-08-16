@@ -38,6 +38,7 @@
 - [Internship 2020 - Département du Val d'Oise](Reports/Internship%202020%20Report.pdf)
 - [Internship 2021 - BDO France](Reports/Internship%202021%20Report.pdf)
 - [Internship 2023 - ac6](Reports/Internship%202023%20Report.pdf)
+- [Internship 2026 - CR System](Reports/Rapport%20de%20Stage%202026.pdf)
 - [Other Reports](Reports)
 
 ## Other Work Repos
